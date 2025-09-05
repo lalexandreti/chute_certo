@@ -12,11 +12,11 @@ short_description: Aplicações desenvolvidas no Mestrado Profissional da UNB
 
 ---
 
-# Simulação de Monte Carlo — Palmeiras (2023–2025)
+Simulação de Monte Carlo — Palmeiras (2023–2025)
 
 
 
-#Este Space implementa:
+Este Space implementa:
 
 1.📈 **Beta–Binomial** para taxa de conversão `p` (gols / chutes no alvo), com prior Uniforme, Jeffreys ou personalizada;  
 2.📊 **Negativa Binomial (mistura)** para estimar **quantos chutes no alvo (SOT)** são necessários para alcançar **k gols** com probabilidade alvo (ex.: 80% ou 90%);  
@@ -44,5 +44,5 @@ Check out the configuration reference at https://huggingface.co/docs/hub/spaces-
 
 ---
 
-Desenvolvido por: **Mestrando Luiz Alexandre Rodrigues Silva**
+Desenvolvido por: Mestrando Luiz Alexandre Rodrigues Silva
 

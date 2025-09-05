@@ -3,8 +3,7 @@ title: "Simulação de Monte Carlo — Futebol (Beta–Binomial / NegBin / Tempo
 emoji: ⚽🏃
 colorFrom: blue
 colorTo: indigo
-sdk: gradio
-sdk_version: 5.44.1
+sdk: streamlit
 python_version: "3.13"
 app_file: app.py
 pinned: false
@@ -37,7 +36,7 @@ Este Space implementa:
 ## Execução local
 ```bash
 pip install -r requirements.txt
-python app.py
+streamlit run app.py
 
 
 

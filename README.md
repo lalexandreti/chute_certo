@@ -14,11 +14,13 @@ short_description: Aplicações desenvolvidas no Mestrado Profissional da UNB
 
 # Simulação de Monte Carlo — Palmeiras (2023–2025)
 
+
+
 #Este Space implementa:
 
-1. **Beta–Binomial** para taxa de conversão `p` (gols / chutes no alvo), com prior Uniforme, Jeffreys ou personalizada;  
-2. **Negativa Binomial (mistura)** para estimar **quantos chutes no alvo (SOT)** são necessários para alcançar **k gols** com probabilidade alvo (ex.: 80% ou 90%);  
-3. **Tempo até o gol** via **Exponencial** (Poisson thinning) e **Weibull** (shape `k`), usando uma taxa de SOT por minuto estimada de `SOT_total / (jogos * 90)`.
+1.📈 **Beta–Binomial** para taxa de conversão `p` (gols / chutes no alvo), com prior Uniforme, Jeffreys ou personalizada;  
+2.📊 **Negativa Binomial (mistura)** para estimar **quantos chutes no alvo (SOT)** são necessários para alcançar **k gols** com probabilidade alvo (ex.: 80% ou 90%);  
+3.⏳: **Tempo até o gol** via **Exponencial** (Poisson thinning) e **Weibull** (shape `k`), usando uma taxa de SOT por minuto estimada de `SOT_total / (jogos * 90)`.
 
 ## Como usar
 - Envie um CSV com colunas `gols` e `chutes_no_gol` (vírgula ou `;`). O app detecta e mapeia automaticamente.
@@ -42,10 +44,5 @@ Check out the configuration reference at https://huggingface.co/docs/hub/spaces-
 
 ---
 
-## 2) `requirements.txt`
-```txt
-gradio>=4.44.0
-pandas>=2.0
-numpy>=1.25
-matplotlib>=3.7
-scipy>=1.11
+Desenvolvido por: **Mestrando Luiz Alexandre Rodrigues Silva**
+

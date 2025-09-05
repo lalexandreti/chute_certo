@@ -5,6 +5,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import gradio as gr
+import streamlit as st
 
 from mc_core import (
     load_csv_any, map_columns, posterior_beta_params, sample_posterior_p, predictive_goals,

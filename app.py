@@ -1,4 +1,5 @@
 import io
+import streamlit as st
 import numpy as np
 import pandas as pd
 from PIL import Image
@@ -6,7 +7,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import gradio as gr
-import streamlit as st
+
 
 from mc_core import (
     load_csv_any, map_columns, posterior_beta_params, sample_posterior_p, predictive_goals,
@@ -16,6 +17,7 @@ from mc_core import (
 
 
 # Configuração da página
+
 st.set_page_config(page_title="Análise de Distribuições de Probabilidade",
                    layout="wide",
                    initial_sidebar_state="expanded")
@@ -33,6 +35,7 @@ st.markdown(
 )
 # Caminho direto da logo (sem usar PIL)
 logo_path = "MARCADOR.png"
+Image ="MARCADOR.png"
 
 # Título e Logos
 col1, col2, col3 = st.columns([1, 6, 1])
@@ -44,7 +47,7 @@ with col2:
     st.markdown("<h3 style='text-align: center; color: #003366;'>Mestrando Luiz Alexandre Rodrigues Silva</h3>", 
                 unsafe_allow_html=True)
 with col3:
-    st.image(logo_path, use_container_width=True)
+    st.image(Image, use_container_width=True)
 
 st.markdown("---")
 

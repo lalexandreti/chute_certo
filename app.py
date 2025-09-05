@@ -13,7 +13,7 @@ from mc_core import (
 )
 
 # Caminho direto da logo (sem usar PIL)
-logo_path = "Logo/MARCADOR.png"
+logo_path = "MARCADOR.png"
 
 # Título e Logos
 col1, col2, col3 = st.columns([1, 6, 1])

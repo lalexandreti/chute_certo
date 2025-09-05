@@ -15,20 +15,41 @@ def _pick(colnames_lower, aliases):
             return colnames_lower.index(a.lower())
     return None
 
-def load_csv_any(path: str, sep_hint: Optional[str] = None) -> pd.DataFrame:
-    # Tenta vírgula, cai para ';' se detectar 1 coluna "entupida"
+def load_csv_any(path_or_buffer, sep_hint: Optional[str] = None) -> pd.DataFrame:
+    """
+    Aceita caminho (str) OU arquivo/bytes (ex.: st.file_uploader).
+    Tenta vírgula; se detectar 1 coluna "entupida", relê com ';'.
+    """
+    # Caso 1: veio um objeto arquivo/bytes (tem .read)
+    if hasattr(path_or_buffer, "read"):
+        f = path_or_buffer
+        # tentativa com vírgula
+        f.seek(0)
+        try:
+            df = pd.read_csv(f)
+        except Exception:
+            # tentativa com ';'
+            f.seek(0)
+            df = pd.read_csv(f, sep=";")
+        # fallback se ficou 1 coluna só
+        if len(df.columns) == 1:
+            f.seek(0)
+            df = pd.read_csv(f, sep=";")
+        return df
+
+    # Caso 2: veio um caminho (str)
     if sep_hint is None:
         try:
-            df = pd.read_csv(path)
+            df = pd.read_csv(path_or_buffer)
         except Exception:
-            df = pd.read_csv(path, sep=";")
+            df = pd.read_csv(path_or_buffer, sep=";")
         if len(df.columns) == 1:
             head_vals = df.head(3).iloc[:, 0].tolist()
             if (";" in df.columns[0]) or any(isinstance(x, str) and ";" in x for x in head_vals):
-                df = pd.read_csv(path, sep=";")
+                df = pd.read_csv(path_or_buffer, sep=";")
         return df
     else:
-        return pd.read_csv(path, sep=sep_hint)
+        return pd.read_csv(path_or_buffer, sep=sep_hint)
 
 def map_columns(df: pd.DataFrame) -> Tuple[str, str]:
     cols_lower = [c.strip().lower() for c in df.columns]

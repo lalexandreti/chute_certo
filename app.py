@@ -138,7 +138,7 @@ def run_time_to_goal(file_path, prior_kind, alpha0, beta0, jogos, min_por_jogo, 
 
 # ---------- UI ----------
 with gr.Blocks(title="Simulação de Monte Carlo — Futebol (Beta–Binomial / NegBin / Tempo até gol)") as demo:
-    gr.Markdown("## ⚽ Simulação de Monte Carlo — Palmeiras 2023–2025")
+    gr.Markdown("## ⚽ Simulação de Monte Carlo — TIME DA SERIE - TEMPORADAS 2023–2025")
 
     # Mostra logo se existir no repo
     if os.path.exists("MARCADOR.png"):

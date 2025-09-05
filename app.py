@@ -1,13 +1,10 @@
 import io
-import streamlit as st
 import numpy as np
 import pandas as pd
-from PIL import Image
 import matplotlib
-matplotlib.use("Agg")
+matplotlib.use("Agg")  # backend sem GUI
 import matplotlib.pyplot as plt
-import gradio as gr
-
+import streamlit as st
 
 from mc_core import (
     load_csv_any, map_columns, posterior_beta_params, sample_posterior_p, predictive_goals,
@@ -15,44 +12,28 @@ from mc_core import (
     estimate_lambda_sot_per_minute, time_to_goal_exponential, time_to_goal_weibull, summarize
 )
 
+# ------------------ Config página ------------------
+st.set_page_config(page_title="Simulação de Monte Carlo — Futebol", layout="wide")
 
-# Configuração da página
-
-st.set_page_config(page_title="Análise de Distribuições de Probabilidade",
-                   layout="wide",
-                   initial_sidebar_state="expanded")
-
-# Slider CSS customization for green color
-st.markdown(
-    """
-    <style>
-    .stSlider > div > div > div > div > div > div {
-        background-color: #4CAF50 !important;  /* Verde para o slider */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-# Caminho direto da logo (sem usar PIL)
-logo_path = "MARCADOR.png"
-Image ="MARCADOR.png"
-
-# Título e Logos
-col1, col2, col3 = st.columns([1, 6, 1])
-with col1:
-    st.image(logo_path, use_container_width=True)
-with col2:
-    st.markdown("<h1 style='text-align: center; color: #003366;'>Análise de Distribuições de Probabilidade</h1>", 
-                unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center; color: #003366;'>Mestrando Luiz Alexandre Rodrigues Silva</h3>", 
-                unsafe_allow_html=True)
-with col3:
-    st.image(Image, use_container_width=True)
+# Cabeçalho com logos (se existirem no repo)
+left, mid, right = st.columns([1, 6, 1])
+with left:
+    try:
+        st.image("MARCADOR.png", width=120)  # trocado de use_container_width -> width
+    except Exception:
+        pass
+with mid:
+    st.markdown("<h1 style='text-align:center;color:#003366;'>Análise de Distribuições de Probabilidade</h1>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center;color:#003366;'>Mestrando Luiz Alexandre Rodrigues Silva</h3>", unsafe_allow_html=True)
+with right:
+    try:
+        st.image("MARCADOR.png", width=120)
+    except Exception:
+        pass
 
 st.markdown("---")
 
-
-# -------- helpers --------
+# Helpers
 def _ensure_numeric(df, col_g, col_sot):
     df[col_g] = pd.to_numeric(df[col_g], errors="coerce")
     df[col_sot] = pd.to_numeric(df[col_sot], errors="coerce")
@@ -67,182 +48,177 @@ def _fallback_df():
     )
     return pd.read_csv(io.StringIO(csv_text))
 
-# -------- tab 1: Beta–Binomial --------
-def run_beta_binomial(file, prior_kind, alpha0, beta0, S_star, draws, seed_post, seed_pred):
-    df = load_csv_any(file.name) if file is not None else _fallback_df()
-    col_g, col_sot = map_columns(df)
-    df = _ensure_numeric(df, col_g, col_sot)
-    G_total, SOT_total = int(df[col_g].fillna(0).sum()), int(df[col_sot].fillna(0).sum())
+# UI: abas
+tab1, tab2, tab3 = st.tabs([
+    "Beta–Binomial (taxa de conversão)",
+    "Negativa Binomial (SOT para k gols)",
+    "Tempo até gol (Exponencial / Weibull)"
+])
 
-    if prior_kind == "Uniforme (α=1, β=1)":
-        a0, b0 = 1.0, 1.0
-    elif prior_kind == "Jeffreys (α=0.5, β=0.5)":
-        a0, b0 = 0.5, 0.5
-    else:
-        a0, b0 = float(alpha0), float(beta0)
+# ------------------ Aba 1: Beta–Binomial ------------------
+with tab1:
+    st.subheader("Posterior de p e preditiva de gols")
+    uploaded = st.file_uploader("CSV (opcional) — vírgula ou ';' — colunas: gols, chutes_no_gol", type=["csv"])
+    prior = st.radio("Prior para p", ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"], horizontal=True)
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+        alpha0 = st.number_input("α0 (se personalizada)", value=1.0)
+    with c2:
+        beta0 = st.number_input("β0 (se personalizada)", value=1.0)
+    with c3:
+        S_star = st.slider("S* (futuros SOT)", 1, 60, 30, 1)
+    with c4:
+        draws = st.slider("Amostras Monte Carlo", 20000, 300000, 120000, 10000)
 
-    a_post, b_post = posterior_beta_params(G_total, SOT_total, a0, b0)
-    p_samples = sample_posterior_p(a_post, b_post, n=int(draws), seed=int(seed_post))
+    c5, c6 = st.columns(2)
+    with c5:
+        seed_post = st.number_input("Semente posterior", value=42, step=1)
+    with c6:
+        seed_pred = st.number_input("Semente preditiva", value=123, step=1)
 
-    pred = predictive_goals(p_samples, int(S_star), seed=int(seed_pred))
-    table = pd.DataFrame([
-        {"metric": "p (taxa de conversão)", **summarize(p_samples)},
-        {"metric": f"gols em {int(S_star)} SOT", **summarize(pred)},
-    ])
+    if st.button("Rodar (Beta–Binomial)"):
+        df = load_csv_any(uploaded.name) if uploaded else _fallback_df()
+        col_g, col_sot = map_columns(df)
+        df = _ensure_numeric(df, col_g, col_sot)
+        G_total, SOT_total = int(df[col_g].fillna(0).sum()), int(df[col_sot].fillna(0).sum())
 
-    fig1 = plt.figure()
-    plt.hist(p_samples, bins=60, density=True)
-    plt.title("Posterior de p"); plt.xlabel("p"); plt.ylabel("densidade"); plt.tight_layout()
+        if prior.startswith("Uniforme"):
+            a0, b0 = 1.0, 1.0
+        elif prior.startswith("Jeffreys"):
+            a0, b0 = 0.5, 0.5
+        else:
+            a0, b0 = float(alpha0), float(beta0)
 
-    fig2 = plt.figure()
-    bins = range(int(np.min(pred)), int(np.max(pred)) + 2)
-    plt.hist(pred, bins=bins, density=True)
-    plt.title(f"Distribuição preditiva: gols em {int(S_star)} SOT")
-    plt.xlabel("gols"); plt.ylabel("densidade"); plt.tight_layout()
+        a_post, b_post = posterior_beta_params(G_total, SOT_total, a0, b0)
+        p_samples = sample_posterior_p(a_post, b_post, n=int(draws), seed=int(seed_post))
+        pred = predictive_goals(p_samples, int(S_star), seed=int(seed_pred))
 
-    meta = f"G_total={G_total}, SOT_total={SOT_total}\nPosterior: alpha={a_post:.3f}, beta={b_post:.3f}"
-    return meta, table, fig1, fig2
+        st.write(pd.DataFrame([
+            {"metric": "p (taxa de conversão)", **summarize(p_samples)},
+            {"metric": f"gols em {int(S_star)} SOT", **summarize(pred)},
+        ]))
 
-# -------- tab 2: Negativa Binomial --------
-def run_negbin(file, prior_kind, alpha0, beta0, k_goals, target_prob, draws, seed_post):
-    df = load_csv_any(file.name) if file is not None else _fallback_df()
-    col_g, col_sot = map_columns(df)
-    df = _ensure_numeric(df, col_g, col_sot)
-    G_total, SOT_total = int(df[col_g].fillna(0).sum()), int(df[col_sot].fillna(0).sum())
+        # Gráficos
+        fig1 = plt.figure()
+        plt.hist(p_samples, bins=60, density=True)
+        plt.title("Posterior de p"); plt.xlabel("p"); plt.ylabel("densidade"); plt.tight_layout()
+        st.pyplot(fig1)
 
-    if prior_kind == "Uniforme (α=1, β=1)":
-        a0, b0 = 1.0, 1.0
-    elif prior_kind == "Jeffreys (α=0.5, β=0.5)":
-        a0, b0 = 0.5, 0.5
-    else:
-        a0, b0 = float(alpha0), float(beta0)
+        fig2 = plt.figure()
+        bins = range(int(np.min(pred)), int(np.max(pred))+2)
+        plt.hist(pred, bins=bins, density=True)
+        plt.title(f"Distribuição preditiva: gols em {int(S_star)} SOT")
+        plt.xlabel("gols"); plt.ylabel("densidade"); plt.tight_layout()
+        st.pyplot(fig2)
 
-    a_post, b_post = posterior_beta_params(G_total, SOT_total, a0, b0)
-    p_samples = sample_posterior_p(a_post, b_post, n=int(draws), seed=int(seed_post))
+# ------------------ Aba 2: Negativa Binomial ------------------
+with tab2:
+    st.subheader("SOT necessários para atingir k gols com alta probabilidade")
+    uploaded2 = st.file_uploader("CSV (opcional)", type=["csv"], key="csv2")
+    prior2 = st.radio("Prior para p", ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"], horizontal=True, key="prior2")
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+        alpha02 = st.number_input("α0 (se personalizada)", value=1.0, key="a02")
+    with c2:
+        beta02  = st.number_input("β0 (se personalizada)", value=1.0, key="b02")
+    with c3:
+        k_goals = st.slider("k (gols alvo)", 1, 20, 5, 1)
+    with c4:
+        target_prob = st.slider("Probabilidade alvo P(G≥k)", 0.50, 0.99, 0.80, 0.01)
 
-    trials = negbin_trials_needed(p_samples, int(k_goals), seed=2024)
-    table = pd.DataFrame([{"metric": f"SOT p/ {int(k_goals)} gols", **summarize(trials)}])
+    c5, c6 = st.columns(2)
+    with c5:
+        draws2 = st.slider("Amostras Monte Carlo", 20000, 300000, 120000, 10000, key="draws2")
+    with c6:
+        seed_post2 = st.number_input("Semente posterior", value=42, step=1, key="seedp2")
 
-    T_min = min_sot_for_k_prob(p_samples, int(k_goals), float(target_prob), t_max=3000)
-    meta = f"G_total={G_total}, SOT_total={SOT_total}\nMin SOT p/ P(G>={int(k_goals)})>={float(target_prob):.0%}: {T_min}"
+    if st.button("Rodar (NegBin)"):
+        df = load_csv_any(uploaded2.name) if uploaded2 else _fallback_df()
+        col_g, col_sot = map_columns(df)
+        df = _ensure_numeric(df, col_g, col_sot)
+        G_total, SOT_total = int(df[col_g].fillna(0).sum()), int(df[col_sot].fillna(0).sum())
 
-    fig = plt.figure()
-    plt.hist(trials, bins=60, density=True)
-    plt.title(f"SOT necessários para {int(k_goals)} gols")
-    plt.xlabel("SOT"); plt.ylabel("densidade"); plt.tight_layout()
+        if prior2.startswith("Uniforme"):
+            a0, b0 = 1.0, 1.0
+        elif prior2.startswith("Jeffreys"):
+            a0, b0 = 0.5, 0.5
+        else:
+            a0, b0 = float(alpha02), float(beta02)
 
-    return meta, table, fig
+        a_post, b_post = posterior_beta_params(G_total, SOT_total, a0, b0)
+        p_samples = sample_posterior_p(a_post, b_post, n=int(draws2), seed=int(seed_post2))
 
-# -------- tab 3: Tempo até o gol --------
-def run_time_to_goal(file, prior_kind, alpha0, beta0, jogos, min_por_jogo, weibull_k, draws, seed_post):
-    df = load_csv_any(file.name) if file is not None else _fallback_df()
-    col_g, col_sot = map_columns(df)
-    df = _ensure_numeric(df, col_g, col_sot)
-    G_total, SOT_total = int(df[col_g].fillna(0).sum()), int(df[col_sot].fillna(0).sum())
+        trials = negbin_trials_needed(p_samples, int(k_goals), seed=2024)
+        T_min = min_sot_for_k_prob(p_samples, int(k_goals), float(target_prob), t_max=3000)
 
-    if prior_kind == "Uniforme (α=1, β=1)":
-        a0, b0 = 1.0, 1.0
-    elif prior_kind == "Jeffreys (α=0.5, β=0.5)":
-        a0, b0 = 0.5, 0.5
-    else:
-        a0, b0 = float(alpha0), float(beta0)
+        st.write(pd.DataFrame([{"metric": f"SOT p/ {int(k_goals)} gols", **summarize(trials)}]))
+        st.info(f"Min SOT para P(G≥{int(k_goals)})≥{target_prob:.0%}: **{T_min}**")
 
-    a_post, b_post = posterior_beta_params(G_total, SOT_total, a0, b0)
-    p_samples = sample_posterior_p(a_post, b_post, n=int(draws), seed=int(seed_post))
+        fig = plt.figure()
+        plt.hist(trials, bins=60, density=True)
+        plt.title(f"SOT necessários para {int(k_goals)} gols")
+        plt.xlabel("SOT"); plt.ylabel("densidade"); plt.tight_layout()
+        # marcadores visuais
+        ymax = plt.ylim()[1]
+        plt.axvline(T_min); plt.text(T_min, ymax*0.9, f"Min T≈{T_min}", rotation=90, va="top")
+        st.pyplot(fig)
 
-    lam_sot = estimate_lambda_sot_per_minute(SOT_total, int(jogos), int(min_por_jogo))
-    t_exp = time_to_goal_exponential(p_samples, lam_sot, n=int(draws), seed=7)
-    t_wei = time_to_goal_weibull(p_samples, lam_sot, shape_k=float(weibull_k), n=int(draws), seed=8)
+# ------------------ Aba 3: Tempo até gol ------------------
+with tab3:
+    st.subheader("Tempo até o gol — Exponencial / Weibull")
+    uploaded3 = st.file_uploader("CSV (opcional)", type=["csv"], key="csv3")
+    prior3 = st.radio("Prior para p", ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"], horizontal=True, key="prior3")
 
-    tab = pd.DataFrame([
-        {"metric": "Tempo até gol (Exponencial, min)", **summarize(t_exp)},
-        {"metric": f"Tempo até gol (Weibull k={weibull_k}, min)", **summarize(t_wei)},
-    ])
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+        alpha03 = st.number_input("α0 (se personalizada)", value=1.0, key="a03")
+    with c2:
+        beta03  = st.number_input("β0 (se personalizada)", value=1.0, key="b03")
+    with c3:
+        jogos = st.number_input("Jogos", value=38, step=1)
+    with c4:
+        min_por_jogo = st.number_input("Minutos por jogo", value=90, step=1)
 
-    fig1 = plt.figure()
-    plt.hist(t_exp, bins=60, density=True)
-    plt.title("Tempo até gol — Exponencial"); plt.xlabel("min"); plt.ylabel("densidade"); plt.tight_layout()
+    c5, c6, c7 = st.columns(3)
+    with c5:
+        weibull_k = st.number_input("Weibull shape k (>0)", value=1.5)
+    with c6:
+        draws3 = st.slider("Amostras Monte Carlo", 20000, 300000, 120000, 10000, key="draws3")
+    with c7:
+        seed_post3 = st.number_input("Semente posterior", value=42, step=1, key="seedp3")
 
-    fig2 = plt.figure()
-    plt.hist(t_wei, bins=60, density=True)
-    plt.title(f"Tempo até gol — Weibull (k={weibull_k})"); plt.xlabel("min"); plt.ylabel("densidade"); plt.tight_layout()
+    if st.button("Rodar (Tempo até gol)"):
+        df = load_csv_any(uploaded3.name) if uploaded3 else _fallback_df()
+        col_g, col_sot = map_columns(df)
+        df = _ensure_numeric(df, col_g, col_sot)
+        G_total, SOT_total = int(df[col_g].fillna(0).sum()), int(df[col_sot].fillna(0).sum())
 
-    meta = f"SOT_total={SOT_total}, λ_SOT={lam_sot:.4f} por minuto"
-    return meta, tab, fig1, fig2
+        if prior3.startswith("Uniforme"):
+            a0, b0 = 1.0, 1.0
+        elif prior3.startswith("Jeffreys"):
+            a0, b0 = 0.5, 0.5
+        else:
+            a0, b0 = float(alpha03), float(beta03)
 
-# -------- UI --------
-with gr.Blocks(title="Simulação de Monte Carlo — Futebol (Beta–Binomial / NegBin / Tempo até gol)") as demo:
-    gr.Markdown("## ⚽ Simulação de Monte Carlo — Palmeiras 2023–2025")
+        a_post, b_post = posterior_beta_params(G_total, SOT_total, a0, b0)
+        p_samples = sample_posterior_p(a_post, b_post, n=int(draws3), seed=int(seed_post3))
 
-    with gr.Tabs():
-        with gr.TabItem("Beta–Binomial (taxa de conversão)"):
-            file_in = gr.File(label="CSV (opcional)")
-            prior_kind = gr.Radio(
-                ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"],
-                value="Uniforme (α=1, β=1)"
-            )
-            alpha0 = gr.Number(value=1.0, label="α0 (se personalizada)")
-            beta0  = gr.Number(value=1.0, label="β0 (se personalizada)")
-            S_star = gr.Slider(1, 60, value=30, step=1, label="S* (futuros SOT)")
-            draws  = gr.Slider(20_000, 300_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
-            seed_p = gr.Number(value=42, label="Semente posterior")
-            seed_g = gr.Number(value=123, label="Semente preditiva")
-            btn = gr.Button("Rodar")
+        lam_sot = estimate_lambda_sot_per_minute(SOT_total, int(jogos), int(min_por_jogo))
+        t_exp = time_to_goal_exponential(p_samples, lam_sot, n=int(draws3), seed=7)
+        t_wei = time_to_goal_weibull(p_samples, lam_sot, shape_k=float(weibull_k), n=int(draws3), seed=8)
 
-            meta_out   = gr.Textbox(label="Resumo")
-            table_out  = gr.Dataframe(label="Estatísticas", interactive=False)
-            plot_post  = gr.Plot(label="Posterior de p")
-            plot_pred  = gr.Plot(label="Preditiva de gols")
+        st.write(pd.DataFrame([
+            {"metric": "Tempo até gol (Exponencial, min)", **summarize(t_exp)},
+            {"metric": f"Tempo até gol (Weibull k={weibull_k}, min)", **summarize(t_wei)},
+        ]))
 
-            btn.click(run_beta_binomial,
-                      [file_in, prior_kind, alpha0, beta0, S_star, draws, seed_p, seed_g],
-                      [meta_out, table_out, plot_post, plot_pred])
+        fig1 = plt.figure()
+        plt.hist(t_exp, bins=60, density=True)
+        plt.title("Tempo até gol — Exponencial"); plt.xlabel("min"); plt.ylabel("densidade"); plt.tight_layout()
+        st.pyplot(fig1)
 
-        with gr.TabItem("Negativa Binomial (SOT para k gols)"):
-            file_in2 = gr.File(label="CSV (opcional)")
-            prior_kind2 = gr.Radio(
-                ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"],
-                value="Uniforme (α=1, β=1)"
-            )
-            alpha02 = gr.Number(value=1.0, label="α0 (se personalizada)")
-            beta02  = gr.Number(value=1.0, label="β0 (se personalizada)")
-            k_goals = gr.Slider(1, 20, value=5, step=1, label="k (gols alvo)")
-            target_prob = gr.Slider(0.5, 0.99, value=0.8, step=0.01, label="Probabilidade alvo P(G≥k)")
-            draws2  = gr.Slider(20_000, 300_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
-            seed_p2 = gr.Number(value=42, label="Semente posterior")
-            btn2 = gr.Button("Rodar")
+        fig2 = plt.figure()
+        plt.hist(t_wei, bins=60, density=True)
+        plt.title(f"Tempo até gol — Weibull (k={weibull_k})"); plt.xlabel("min"); plt.ylabel("densidade"); plt.tight_layout()
+        st.pyplot(fig2)
 
-            meta2 = gr.Textbox(label="Resumo")
-            table2 = gr.Dataframe(label="Estatísticas", interactive=False)
-            plot2  = gr.Plot(label="SOT necessários (distribuição)")
-
-            btn2.click(run_negbin,
-                       [file_in2, prior_kind2, alpha02, beta02, k_goals, target_prob, draws2, seed_p2],
-                       [meta2, table2, plot2])
-
-        with gr.TabItem("Tempo até gol (Exponencial / Weibull)"):
-            file_in3 = gr.File(label="CSV (opcional)")
-            prior_kind3 = gr.Radio(
-                ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"],
-                value="Uniforme (α=1, β=1)"
-            )
-            alpha03 = gr.Number(value=1.0, label="α0 (se personalizada)")
-            beta03  = gr.Number(value=1.0, label="β0 (se personalizada)")
-            jogos = gr.Number(value=38, label="Jogos no dataset")
-            min_por_jogo = gr.Number(value=90, label="Minutos por jogo")
-            weibull_k = gr.Number(value=1.5, label="Weibull shape k (>0)")
-            draws3  = gr.Slider(20_000, 300_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
-            seed_p3 = gr.Number(value=42, label="Semente posterior")
-            btn3 = gr.Button("Rodar")
-
-            meta3 = gr.Textbox(label="Resumo")
-            table3 = gr.Dataframe(label="Estatísticas", interactive=False)
-            plot3a = gr.Plot(label="Tempo até gol — Exponencial")
-            plot3b = gr.Plot(label="Tempo até gol — Weibull")
-
-            btn3.click(run_time_to_goal,
-                       [file_in3, prior_kind3, alpha03, beta03, jogos, min_por_jogo, weibull_k, draws3, seed_p3],
-                       [meta3, table3, plot3a, plot3b])
-
-if __name__ == "__main__":
-    demo.launch()

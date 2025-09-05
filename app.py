@@ -77,7 +77,8 @@ with tab1:
         seed_pred = st.number_input("Semente preditiva", value=123, step=1)
 
     if st.button("Rodar (Beta–Binomial)"):
-        df = load_csv_any(uploaded.name) if uploaded else _fallback_df()
+        df = load_csv_any(uploaded) if uploaded else _fallback_df()
+
         col_g, col_sot = map_columns(df)
         df = _ensure_numeric(df, col_g, col_sot)
         G_total, SOT_total = int(df[col_g].fillna(0).sum()), int(df[col_sot].fillna(0).sum())
@@ -133,7 +134,7 @@ with tab2:
         seed_post2 = st.number_input("Semente posterior", value=42, step=1, key="seedp2")
 
     if st.button("Rodar (NegBin)"):
-        df = load_csv_any(uploaded2.name) if uploaded2 else _fallback_df()
+        df = load_csv_any(uploaded2) if uploaded2 else _fallback_df()
         col_g, col_sot = map_columns(df)
         df = _ensure_numeric(df, col_g, col_sot)
         G_total, SOT_total = int(df[col_g].fillna(0).sum()), int(df[col_sot].fillna(0).sum())
@@ -188,7 +189,7 @@ with tab3:
         seed_post3 = st.number_input("Semente posterior", value=42, step=1, key="seedp3")
 
     if st.button("Rodar (Tempo até gol)"):
-        df = load_csv_any(uploaded3.name) if uploaded3 else _fallback_df()
+        df = load_csv_any(uploaded3) if uploaded3 else _fallback_df()
         col_g, col_sot = map_columns(df)
         df = _ensure_numeric(df, col_g, col_sot)
         G_total, SOT_total = int(df[col_g].fillna(0).sum()), int(df[col_sot].fillna(0).sum())

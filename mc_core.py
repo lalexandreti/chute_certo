@@ -2,7 +2,7 @@ import io
 import numpy as np
 import pandas as pd
 from typing import Tuple, Optional
-from scipy.special import gamma  # para escala da Weibull
+from math import gamma  # para escala da Weibull
 
 # ----------------------------
 # Loading / column mapping

@@ -1,6 +1,7 @@
 import io
 import numpy as np
 import pandas as pd
+from PIL import Image
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -13,6 +14,23 @@ from mc_core import (
     estimate_lambda_sot_per_minute, time_to_goal_exponential, time_to_goal_weibull, summarize
 )
 
+
+# Configuração da página
+st.set_page_config(page_title="Análise de Distribuições de Probabilidade",
+                   layout="wide",
+                   initial_sidebar_state="expanded")
+
+# Slider CSS customization for green color
+st.markdown(
+    """
+    <style>
+    .stSlider > div > div > div > div > div > div {
+        background-color: #4CAF50 !important;  /* Verde para o slider */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 # Caminho direto da logo (sem usar PIL)
 logo_path = "MARCADOR.png"
 

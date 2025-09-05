@@ -1,8 +1,7 @@
-import io
 import numpy as np
 import pandas as pd
 from typing import Tuple, Optional
-from math import gamma  # para escala da Weibull
+from math import gamma  # escala da Weibull sem SciPy
 
 # ----------------------------
 # Loading / column mapping
@@ -17,9 +16,7 @@ def _pick(colnames_lower, aliases):
     return None
 
 def load_csv_any(path: str, sep_hint: Optional[str] = None) -> pd.DataFrame:
-    """
-    Tenta ler com vírgula; se detectar 1 coluna "entupida" com ';', relê com ';'.
-    """
+    # Tenta vírgula, cai para ';' se detectar 1 coluna "entupida"
     if sep_hint is None:
         try:
             df = pd.read_csv(path)
@@ -71,32 +68,23 @@ def predictive_goals(p_samples: np.ndarray, s_star: int, seed=123):
     return rng.binomial(int(s_star), p_samples)
 
 # ----------------------------
-# Negativa Binomial: SOT (trials) para atingir k gols
+# Negativa Binomial: SOT (trials) p/ atingir k gols
 # ----------------------------
 def negbin_trials_needed(p_samples: np.ndarray, k_successes: int, seed=2024) -> np.ndarray:
-    """
-    Para cada p ~ posterior, amostra 'falhas antes de k' ~ NegBin(k, p), depois trials = falhas + k.
-    Retorna um array com SOT necessários (trials) para alcançar k gols.
-    """
     if k_successes <= 0:
         raise ValueError("k_successes deve ser >= 1.")
     rng = np.random.default_rng(seed)
     failures = rng.negative_binomial(k_successes, p_samples)
-    trials = failures + k_successes
-    return trials
+    return failures + k_successes  # trials
 
 def min_sot_for_k_prob(p_samples: np.ndarray, k_successes: int, target_prob: float, t_max: int = 3000) -> int:
-    """
-    Menor T tal que E_p[ P(Binomial(T, p) >= k) ] >= target_prob, aproximado por simulação.
-    """
     if not (0 < target_prob < 1):
         raise ValueError("target_prob deve estar entre (0,1).")
     T = k_successes
     while T <= t_max:
         rng = np.random.default_rng(12345 + T)
         goals_sim = rng.binomial(T, p_samples)
-        prob = (goals_sim >= k_successes).mean()
-        if prob >= target_prob:
+        if (goals_sim >= k_successes).mean() >= target_prob:
             return T
         T += 1
     return t_max
@@ -110,27 +98,19 @@ def estimate_lambda_sot_per_minute(sot_total: int, jogos: int = 38, minutos_por_
     return sot_total / (jogos * minutos_por_jogo)
 
 def time_to_goal_exponential(p_samples: np.ndarray, lambda_sot_per_min: float, n=100_000, seed=7) -> np.ndarray:
-    """
-    Thinning de Poisson: lambda_goal = p * lambda_sot. Tempo ~ Exp(lambda_goal).
-    """
     if lambda_sot_per_min <= 0:
         raise ValueError("lambda_sot_per_min deve ser > 0.")
     rng = np.random.default_rng(seed)
-    lambda_goal = p_samples * lambda_sot_per_min
-    lambda_goal = np.clip(lambda_goal, 1e-12, None)
+    lambda_goal = np.clip(p_samples * lambda_sot_per_min, 1e-12, None)
     return rng.exponential(1.0 / lambda_goal, size=len(lambda_goal))
 
 def time_to_goal_weibull(p_samples: np.ndarray, lambda_sot_per_min: float, shape_k: float = 1.5, n=100_000, seed=8) -> np.ndarray:
-    """
-    Weibull com shape k e scale ajustado para ter a mesma média do Exponencial (1/lambda_goal).
-    Mean(Weibull(k, scale θ)) = θ * Γ(1 + 1/k). Então θ = (1/lambda_goal) / Γ(1 + 1/k).
-    """
     if lambda_sot_per_min <= 0 or shape_k <= 0:
         raise ValueError("lambda_sot_per_min e shape_k devem ser > 0.")
     rng = np.random.default_rng(seed)
     lambda_goal = np.clip(p_samples * lambda_sot_per_min, 1e-12, None)
-    theta = (1.0 / lambda_goal) / float(gamma(1.0 + 1.0/shape_k))
-    base = rng.weibull(shape_k, size=len(lambda_goal))  # np: scale=1; ajustamos multiplicando por θ
+    theta = (1.0 / lambda_goal) / float(gamma(1.0 + 1.0/shape_k))  # mesma média do exponencial
+    base = rng.weibull(shape_k, size=len(lambda_goal))  # scale=1
     return base * theta
 
 def summarize(arr: np.ndarray) -> dict:

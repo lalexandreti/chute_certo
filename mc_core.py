@@ -1,13 +1,16 @@
 import numpy as np
 import pandas as pd
-from typing import Tuple, Optional
-from math import gamma  # escala da Weibull sem SciPy
+from typing import Tuple, Optional, Any
+from math import gamma  # para escala da Weibull (sem SciPy)
 
 # ----------------------------
 # Loading / column mapping
 # ----------------------------
 ALIASES_GOALS = ["goals", "gols", "gls", "g"]
-ALIASES_SOT   = ["shots_on_target", "chutes_no_gol", "finalizacoes_no_gol", "finalizações no alvo", "chutes no alvo"]
+ALIASES_SOT   = [
+    "shots_on_target", "chutes_no_gol",
+    "finalizacoes_no_gol", "finalizações no alvo", "chutes no alvo"
+]
 
 def _pick(colnames_lower, aliases):
     for a in aliases:
@@ -15,29 +18,26 @@ def _pick(colnames_lower, aliases):
             return colnames_lower.index(a.lower())
     return None
 
-def load_csv_any(path_or_buffer, sep_hint: Optional[str] = None) -> pd.DataFrame:
+def load_csv_any(path_or_buffer: Any, sep_hint: Optional[str] = None) -> pd.DataFrame:
     """
-    Aceita caminho (str) OU arquivo/bytes (ex.: st.file_uploader).
+    Aceita caminho (str) OU arquivo/bytes (file-like).
     Tenta vírgula; se detectar 1 coluna "entupida", relê com ';'.
     """
-    # Caso 1: veio um objeto arquivo/bytes (tem .read)
+    # Caso: veio um file-like (tem .read)
     if hasattr(path_or_buffer, "read"):
         f = path_or_buffer
-        # tentativa com vírgula
         f.seek(0)
         try:
             df = pd.read_csv(f)
         except Exception:
-            # tentativa com ';'
             f.seek(0)
             df = pd.read_csv(f, sep=";")
-        # fallback se ficou 1 coluna só
         if len(df.columns) == 1:
             f.seek(0)
             df = pd.read_csv(f, sep=";")
         return df
 
-    # Caso 2: veio um caminho (str)
+    # Caso: veio um caminho (str)
     if sep_hint is None:
         try:
             df = pd.read_csv(path_or_buffer)
@@ -141,3 +141,4 @@ def summarize(arr: np.ndarray) -> dict:
         "p10":    float(np.percentile(arr, 10)),
         "p90":    float(np.percentile(arr, 90)),
     }
+

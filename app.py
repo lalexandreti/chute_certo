@@ -12,6 +12,24 @@ from mc_core import (
     estimate_lambda_sot_per_minute, time_to_goal_exponential, time_to_goal_weibull, summarize
 )
 
+# Caminho direto da logo (sem usar PIL)
+logo_path = "Logo/MARCADOR.png"
+
+# Título e Logos
+col1, col2, col3 = st.columns([1, 6, 1])
+with col1:
+    st.image(logo_path, use_container_width=True)
+with col2:
+    st.markdown("<h1 style='text-align: center; color: #003366;'>Análise de Distribuições de Probabilidade</h1>", 
+                unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center; color: #003366;'>Mestrando Luiz Alexandre Rodrigues Silva</h3>", 
+                unsafe_allow_html=True)
+with col3:
+    st.image(logo_path, use_container_width=True)
+
+st.markdown("---")
+
+
 # -------- helpers --------
 def _ensure_numeric(df, col_g, col_sot):
     df[col_g] = pd.to_numeric(df[col_g], errors="coerce")

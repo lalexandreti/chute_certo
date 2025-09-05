@@ -3,10 +3,9 @@ title: "Simulação de Monte Carlo — Futebol (Beta–Binomial / NegBin / Tempo
 emoji: ⚽🏃
 colorFrom: blue
 colorTo: indigo
-sdk: streamlit
+sdk: gradio
 python_version: "3.13"
 app_file: app.py
-pinned: false
 short_description: Aplicações desenvolvidas no Mestrado Profissional da UNB
 
 ---

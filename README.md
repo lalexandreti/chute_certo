@@ -10,9 +10,10 @@ app_file: app.py
 pinned: false
 short_description: Aplicações desenvolvidas no Mestrado Profissional da UNB
 
+---
+
 # Simulação de Monte Carlo — Palmeiras (2023–2025)
 
----
 #Este Space implementa:
 
 1. **Beta–Binomial** para taxa de conversão `p` (gols / chutes no alvo), com prior Uniforme, Jeffreys ou personalizada;  
@@ -36,3 +37,15 @@ short_description: Aplicações desenvolvidas no Mestrado Profissional da UNB
 pip install -r requirements.txt
 python app.py
 Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+
+
+
+---
+
+## 2) `requirements.txt`
+```txt
+gradio>=4.44.0
+pandas>=2.0
+numpy>=1.25
+matplotlib>=3.7
+scipy>=1.11

@@ -38,7 +38,6 @@ Este Space implementa:
 ```bash
 pip install -r requirements.txt
 python app.py
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
 
 
 

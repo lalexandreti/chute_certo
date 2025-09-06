@@ -16,6 +16,8 @@ from mc_core import (
     summarize
 )
 
+  
+    
 # ---------- helpers ----------
 def _ensure_numeric(df, col_g, col_sot):
     df[col_g] = pd.to_numeric(df[col_g], errors="coerce")
@@ -137,8 +139,15 @@ def run_time_to_goal(file_path, prior_kind, alpha0, beta0, jogos, min_por_jogo, 
     return meta, tab, fig1, fig2
 
 # ---------- UI ----------
-with gr.Blocks(title="Simulação de Monte Carlo — Futebol (Beta–Binomial / NegBin / Tempo até gol)") as demo:
+with gr.Blocks(themes.Soft().themes.title="Simulação de Monte Carlo — Futebol (Beta–Binomial / NegBin / Tempo até gol)") as demo:
     gr.Markdown("## ⚽ Simulação de Monte Carlo — TIME DA SERIE - TEMPORADAS 2023–2025")
+    
+    gr.Markdown("Aplicação Desenvolvida pelo Mestrando Luiz Alexandre Rodrigues Silva")
+    gr.Markdown("# ---------------- Simulação de Monte Carlo — Eficiência de Conversão de Chutes ao gol de um time da Série A ----------------")
+    gr.Markdown("# ----------------  Time escolhido para estudo: Palmeiras ----------------")
+    gr.Markdown("# ----------------  Temporada de 2023 completa (Serie A e Libertadores) ----------------")
+    gr.Markdown("# ----------------  Temporada de 2024 completa (Serie A e Libertadores) ----------------")
+    gr.Markdown("# ----------------  Temporada de 2025 parcial (Serie A, Mundial de Clubes e Libertadores) ----------------")
 
     # Mostra logo se existir no repo
     if os.path.exists("MARCADOR.png"):

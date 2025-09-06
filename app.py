@@ -158,7 +158,7 @@ with gr.Blocks(title="Simulação de Monte Carlo — Futebol (Beta–Binomial / 
                 beta0  = gr.Number(value=1.0, label="β0 (se personalizada)")
                 S_star = gr.Slider(1, 60, value=30, step=1, label="S* (futuros SOT)")
             with gr.Row():
-                draws  = gr.Slider(20_000, 300_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
+                draws  = gr.Slider(20_000, 800_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
                 seed_p = gr.Number(value=42, label="Semente posterior")
                 seed_g = gr.Number(value=123, label="Semente preditiva")
             btn = gr.Button("Rodar")
@@ -187,7 +187,7 @@ with gr.Blocks(title="Simulação de Monte Carlo — Futebol (Beta–Binomial / 
                 k_goals = gr.Slider(1, 20, value=5, step=1, label="k (gols alvo)")
                 target_prob = gr.Slider(0.5, 0.99, value=0.8, step=0.01, label="Probabilidade alvo P(G≥k)")
             with gr.Row():
-                draws2  = gr.Slider(20_000, 300_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
+                draws2  = gr.Slider(20_000, 800_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
                 seed_p2 = gr.Number(value=42, label="Semente posterior")
             btn2 = gr.Button("Rodar")
 
@@ -215,7 +215,7 @@ with gr.Blocks(title="Simulação de Monte Carlo — Futebol (Beta–Binomial / 
                 min_por_jogo = gr.Number(value=90, label="Minutos por jogo")
                 weibull_k = gr.Number(value=1.5, label="Weibull shape k (>0)")
             with gr.Row():
-                draws3  = gr.Slider(20_000, 300_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
+                draws3  = gr.Slider(20_000, 800_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
                 seed_p3 = gr.Number(value=42, label="Semente posterior")
             btn3 = gr.Button("Rodar")
 

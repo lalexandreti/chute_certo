@@ -146,7 +146,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                
     if os.path.exists("logo_ppca.png"):
         with gr.Row():
-            gr.Image("logo_ppca", label="")
+            gr.Image("logo_ppca.png", label="")
     
     gr.Markdown("## ⚽ Simulação de Monte Carlo — TIME DA SERIE - TEMPORADAS 2023–2025")
     

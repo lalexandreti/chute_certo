@@ -157,9 +157,9 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     gr.Markdown("Esta aplicação foi desenvolvida (como default) para testar a Eficiência de Conversão de Chutes ao gol de um time da Série A.")
     gr.Markdown("Para tanto foi realizado um scrapping na internet dos [dados do time escolhido]({URL}), nesse caso, o PALMEIRAS para estudo da simulação de MONTE CARLO".)
     gr.Markdown("Os dados bucaram provar a eficiência dos chutes a gol que foram de fato convertidos em gol, durante os últimos tres anos, considerando;")
-    gr.Markdown("#Temporada de 2023 completa (Serie A e Libertadores) ----------------")
-    gr.Markdown("#Temporada de 2024 completa (Serie A e Libertadores) ----------------")
-    gr.Markdown("#Temporada de 2025 parcial (Serie A, Mundial de Clubes e Libertadores) ----------------")
+    gr.Markdown("#Temporada de 2023 completa (Serie A e Libertadores)")
+    gr.Markdown("#Temporada de 2024 completa (Serie A e Libertadores)")
+    gr.Markdown("#Temporada de 2025 parcial (Serie A, Mundial de Clubes e Libertadores)")
 
     # Mostra logo se existir no repo
 

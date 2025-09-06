@@ -139,8 +139,8 @@ def run_time_to_goal(file_path, prior_kind, alpha0, beta0, jogos, min_por_jogo, 
     return meta, tab, fig1, fig2
 
 # ---------- UI ----------
-with gr.Blocks(themes=gr.themes.Soft()="Simulação de Monte Carlo — Futebol (Beta–Binomial / NegBin / Tempo até gol)") as demo:
-    gr.Markdown("## ⚽ Simulação de Monte Carlo — TIME DA SERIE - TEMPORADAS 2023–2025")
+with gr.Blocks(themes=gr.themes.Soft() as demo:
+    gr.Markdown.tile("## ⚽ Simulação de Monte Carlo — TIME DA SERIE - TEMPORADAS 2023–2025")
     
     gr.Markdown("Aplicação Desenvolvida pelo Mestrando Luiz Alexandre Rodrigues Silva")
     gr.Markdown("# ---------------- Simulação de Monte Carlo — Eficiência de Conversão de Chutes ao gol de um time da Série A ----------------")

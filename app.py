@@ -140,14 +140,19 @@ def run_time_to_goal(file_path, prior_kind, alpha0, beta0, jogos, min_por_jogo, 
 
 # ---------- UI ----------
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
+    if os.path.exists("MARCADOR.png"):
+        with gr.Row():
+            gr.Image("MARCADOR.png", label="")
+    
     gr.Markdown("## ⚽ Simulação de Monte Carlo — TIME DA SERIE - TEMPORADAS 2023–2025")
     
     gr.Markdown("Aplicação Desenvolvida pelo Mestrando Luiz Alexandre Rodrigues Silva")
-    gr.Markdown("# ---------------- Simulação de Monte Carlo — Eficiência de Conversão de Chutes ao gol de um time da Série A ----------------")
-    gr.Markdown("# ----------------  Time escolhido para estudo: Palmeiras ----------------")
-    gr.Markdown("# ----------------  Temporada de 2023 completa (Serie A e Libertadores) ----------------")
-    gr.Markdown("# ----------------  Temporada de 2024 completa (Serie A e Libertadores) ----------------")
-    gr.Markdown("# ----------------  Temporada de 2025 parcial (Serie A, Mundial de Clubes e Libertadores) ----------------")
+    gr.Markdown("Esta aplicação foi desenvolvida (como default) para testar a Eficiência de Conversão de Chutes ao gol de um time da Série A ----------------")
+    gr.Markdown("Para tanto foi realizado um scrapping na internet dos dados do time escolhido, no caso, o PALMEIRAS para estudo da simulação de MONTE CARLO")
+    gr.Markdown("Os dados são para testar a eficincia dos chutes a gol que foram de fato convertidos em gol, durante os últimos tres anos, considerando;")
+    gr.Markdown("#Temporada de 2023 completa (Serie A e Libertadores) ----------------")
+    gr.Markdown("#Temporada de 2024 completa (Serie A e Libertadores) ----------------")
+    gr.Markdown("#Temporada de 2025 parcial (Serie A, Mundial de Clubes e Libertadores) ----------------")
 
     # Mostra logo se existir no repo
     if os.path.exists("MARCADOR.png"):

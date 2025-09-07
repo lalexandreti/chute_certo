@@ -190,13 +190,13 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
 
             # 3) Saídas
     gr.Markdown("Aqui está um resumo das informações fornecidas até o momento:")
-            meta_out   = gr.Textbox(label="Resumo")
+            meta_out = gr.Textbox(label="Resumo")
     gr.Markdown("A partir do que foi rodada é possível levantar a seguiunte tabela de estatísticas:")
-            table_out  = gr.Dataframe(label="Tabela com as Estatísticas", interactive=True)
+            table_out = gr.Dataframe(label="Tabela com as Estatísticas", interactive=True)
     gr.Markdown("Os resultados indicaram uma probabilidade média de conversão em torno de:")
-            plot_post  = gr.Plot(label="Posterior de p")
+            plot_post = gr.Plot(label="Posterior de p")
     gr.Markdown("A previsão de possibilidade de gols com 30 finalizações no alvo mostrou média de :")
-            plot_pred  = gr.Plot(label="Preditiva de gols")
+            plot_pred = gr.Plot(label="Preditiva de gols")
             
     
             # 4) Upload de arquivo preferencial

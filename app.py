@@ -216,9 +216,12 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 seed_p2 = gr.Number(value=42, label="Semente posterior")
 
             gr.Markdown("### Saídas")
+            gr.Markdown("Tabela de estatísticas dos resultados:")
             meta2 = gr.Textbox(label="Resumo")
+            gr.Markdown("Aqui temos a eficiência ofensiva do time estudado, com a média, mediana e o nível de confiança variando em 10% e 90%:")
             table2 = gr.Dataframe(label="Estatísticas", interactive=False)
-            plot2  = gr.Plot(label="SOT necessários (distribuição)")
+            gr.Markdown("Portanto o número de chutes necessários para atingir determinada probabilidade de k gols é de:")
+            plot2  = gr.Plot(label="Finalizações no alvo necessários (distribuição)")
 
             gr.Markdown("---")
             file_in2 = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
@@ -240,9 +243,13 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 seed_p3 = gr.Number(value=42, label="Semente posterior")
 
             gr.Markdown("### Saídas")
+            gr.Markdown("Aqui está um resumo das informações fornecidas até o momento, que apresenta o Total de finalizações no alvo e o minuto em que pode sair um gol:")
             meta3 = gr.Textbox(label="Resumo")
+            gr.Markdown("Tabela de estatísticas de Tempo até o gol a partir das finalizações efetuadas:")
             table3 = gr.Dataframe(label="Estatísticas", interactive=False)
+            gr.Markdown("Neste gráfico pode-se observar o tempo médio até o gol, considerando a 'cauda longa', durante as partidas:")
             plot3a = gr.Plot(label="Tempo até gol — Exponencial")
+            gr.Markdown("Finalmente, aqui se observa uma dispersão diferente, mais realista em certos contextos, considerando por exemploa a pressão ofensiva durantea partida:")
             plot3b = gr.Plot(label="Tempo até gol — Weibull")
 
             gr.Markdown("---")

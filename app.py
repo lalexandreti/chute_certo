@@ -139,6 +139,8 @@ def run_time_to_goal(file_path, prior_kind, alpha0, beta0, jogos, min_por_jogo, 
     return meta, tab, fig1, fig2
 
 # ---------- UI ----------
+
+     # Mostra logo se existir no repo
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     if os.path.exists("MARCADOR.png"):
         with gr.Row():
@@ -161,7 +163,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     gr.Markdown("#A Temporada de 2024 completa (Serie A e Libertadores).")
     gr.Markdown("#A Temporada de 2025 parcial, até o dia 07 de setembro de 2025 (Serie A, Mundial de Clubes e Libertadores).")
 
-    # Mostra logo se existir no repo
+   
     
     # ===== Botão global antes das abas =====
     btn_all = gr.Button("Iniciar", variant="primary")
@@ -172,10 +174,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         
         
         with gr.TabItem("Beta–Binomial (taxa de conversão)"):
-            # 1) Botão no topo
-            btn = gr.Button("Rodar", variant="primary")
-
-            # 2) Demais controles
+            
             prior_kind = gr.Radio(
                 ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"],
                 value="Uniforme (α=1, β=1)"
@@ -207,7 +206,6 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
 
         # ---------------- TAB 2: Negativa Binomial ----------------
         with gr.TabItem("Negativa Binomial (SOT para k gols)"):
-            btn2 = gr.Button("Rodar", variant="primary")
 
             prior_kind2 = gr.Radio(
                 ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"],
@@ -236,8 +234,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
 
         # ---------------- TAB 3: Tempo até o gol ----------------
         with gr.TabItem("Tempo até gol (Exponencial / Weibull)"):
-            btn3 = gr.Button("Rodar", variant="primary")
-
+            
             prior_kind3 = gr.Radio(
                 ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"],
                 value="Uniforme (α=1, β=1)"

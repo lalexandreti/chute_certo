@@ -162,12 +162,14 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     gr.Markdown("#A Temporada de 2025 parcial, até o dia 07 de setembro de 2025 (Serie A, Mundial de Clubes e Libertadores).")
 
     # Mostra logo se existir no repo
-
-
+    
+    # ===== Botão global antes das abas =====
+    btn_all = gr.Button("Iniciar", variant="primary")
+        
+    
     with gr.Tabs():
         # ---------------- TAB 1: Beta–Binomial ----------------
         
-            btn = gr.Button("Rodar", variant="primary")
         
         with gr.TabItem("Beta–Binomial (taxa de conversão)"):
             # 1) Botão no topo

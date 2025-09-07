@@ -142,39 +142,34 @@ def run_time_to_goal(file_path, prior_kind, alpha0, beta0, jogos, min_por_jogo, 
 
      # Mostra logo se existir no repo
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
+    # Logos (se existirem)
     if os.path.exists("MARCADOR.png"):
         with gr.Row():
             gr.Image("MARCADOR.png", label="")
-               
     if os.path.exists("logo_ppca.png"):
         with gr.Row():
             gr.Image("logo_ppca.png", label="")
-    
+
     gr.Markdown("## ⚽ Simulação de Monte Carlo — TIME DA SERIE A - TEMPORADAS 2023–2025")
-    
-    gr.Markdown("Aplicação Desenvolvida pelo Mestrando Luiz Alexandre Rodrigues Silva")
+    gr.Markdown("Aplicação Desenvolvida pelo Mestrando **Luiz Alexandre Rodrigues Silva**")
 
     URL = "https://fbref.com/en/squads/abdce579/2023/matchlogs/all_comps/shooting/Palmeiras-Match-Logs-All-Competitions"
-    
-    gr.Markdown("Esta aplicação foi desenvolvida (como default) para testar a Eficiência de Conversão de Chutes ao gol de um time da Série A.")
-    gr.Markdown("Para tanto foi realizado um scrapping no site da FBREF dos dados do time escolhido, nesse caso, o [PALMEIRAS]({URL}) para uso da simulação de MONTE CARLO.")
-    gr.Markdown("Os dados bucaram servir de insumos para provar a eficiência dos chutes a gol que foram de fato convertidos em gol, durante os últimos três anos, considerando")
-    gr.Markdown("#A Temporada de 2023 completa (Serie A e Libertadores).")
-    gr.Markdown("#A Temporada de 2024 completa (Serie A e Libertadores).")
-    gr.Markdown("#A Temporada de 2025 parcial, até o dia 07 de setembro de 2025 (Serie A, Mundial de Clubes e Libertadores).")
+    gr.Markdown(
+        f"Esta aplicação foi desenvolvida (como *default*) para testar a eficiência de conversão de chutes ao gol de um time da Série A. "
+        f"Para tanto foi realizado um scraping no site da FBREF dos dados do time escolhido, nesse caso, o "
+        f"[PALMEIRAS]({URL}) para uso da simulação de MONTE CARLO."
+    )
+    gr.Markdown("Os dados servem de insumos para medir a eficiência de chutes a gol convertidos em gol, nos últimos três anos:")
+    gr.Markdown("- Temporada **2023** completa (Série A e Libertadores).")
+    gr.Markdown("- Temporada **2024** completa (Série A e Libertadores).")
+    gr.Markdown("- Temporada **2025** parcial, até **07/09/2025** (Série A, Mundial de Clubes e Libertadores).")
 
-   
-    
     # ===== Botão global antes das abas =====
     btn_all = gr.Button("Rodar", variant="primary")
 
-    
     with gr.Tabs():
         # ---------------- TAB 1: Beta–Binomial ----------------
-        
-        
         with gr.TabItem("Beta–Binomial (taxa de conversão)"):
-            
             prior_kind = gr.Radio(
                 ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"],
                 value="Uniforme (α=1, β=1)"
@@ -188,35 +183,25 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 seed_p = gr.Number(value=42, label="Semente posterior")
                 seed_g = gr.Number(value=123, label="Semente preditiva")
 
-            # 3) Saídas
+            gr.Markdown("### Saídas")
             gr.Markdown("Aqui está um resumo das informações fornecidas até o momento:")
-                meta_out = gr.Textbox(label="Resumo")
-            gr.Markdown("A partir do que foi rodada é possível levantar a seguiunte tabela de estatísticas:")
-                table_out = gr.Dataframe(label="Tabela com as Estatísticas", interactive=True)
-            gr.Markdown("Os resultados indicaram uma probabilidade média de conversão em torno de:")
-                plot_post = gr.Plot(label="Posterior de p")
-            gr.Markdown("A previsão de possibilidade de gols com 30 finalizações no alvo mostrou média de :")
-                plot_pred = gr.Plot(label="Preditiva de gols")
-            
-    
-            # 4) Upload de arquivo preferencial
-    
-            gr.Markdown("Caso prefira, você pode subir um arquivo .csv. com as informações de seu time, para que possa prever as estatísticas dele no período desejado.)
-            gr.Markdown("Esse arquivo deve estar separado por vírgulas e conter, em sequência:")
-            gr.Markdown("temporada,total_de_chutes,chutes_no_gol,gols,defendidos,chutes_para_fora,bloqueados,na_trave.")
-            
-                file_in = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
+            meta_out = gr.Textbox(label="Resumo")
+            gr.Markdown("Tabela de estatísticas dos resultados:")
+            table_out = gr.Dataframe(label="Tabela com as Estatísticas", interactive=False)
+            gr.Markdown("Distribuição posterior para a taxa de conversão **p**:")
+            plot_post = gr.Plot(label="Posterior de p")
+            gr.Markdown(f"Distribuição preditiva de gols para S* = {S_star.value}:")
+            plot_pred = gr.Plot(label="Preditiva de gols")
 
-            # 5) Registrar a ação do botão DEPOIS que todos os inputs existirem
-            btn_all.click(
-                run_beta_binomial,
-                [file_in, prior_kind, alpha0, beta0, S_star, draws, seed_p, seed_g],
-                [meta_out, table_out, plot_post, plot_pred]
+            gr.Markdown("---")
+            gr.Markdown(
+                "Caso prefira, você pode **subir um arquivo .csv** com os dados do seu time para estimar as estatísticas desejadas."
             )
+            gr.Markdown("Formato esperado (separado por vírgulas): `temporada,total_de_chutes,chutes_no_gol,gols,defendidos,chutes_para_fora,bloqueados,na_trave`.")
+            file_in = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
 
         # ---------------- TAB 2: Negativa Binomial ----------------
         with gr.TabItem("Negativa Binomial (SOT para k gols)"):
-
             prior_kind2 = gr.Radio(
                 ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"],
                 value="Uniforme (α=1, β=1)"
@@ -225,26 +210,21 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 alpha02 = gr.Number(value=1.0, label="α0 (se personalizada)")
                 beta02  = gr.Number(value=1.0, label="β0 (se personalizada)")
                 k_goals = gr.Slider(1, 20, value=5, step=1, label="k (gols alvo)")
-                target_prob = gr.Slider(0.5, 0.99, value=0.8, step=0.01, label="Probabilidade alvo P(G≥k)")
+                target_prob = gr.Slider(0.5, 0.99, value=0.80, step=0.01, label="Probabilidade alvo P(G≥k)")
             with gr.Row():
                 draws2  = gr.Slider(20_000, 800_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
                 seed_p2 = gr.Number(value=42, label="Semente posterior")
 
+            gr.Markdown("### Saídas")
             meta2 = gr.Textbox(label="Resumo")
             table2 = gr.Dataframe(label="Estatísticas", interactive=False)
             plot2  = gr.Plot(label="SOT necessários (distribuição)")
 
+            gr.Markdown("---")
             file_in2 = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
-
-            btn_all.click(
-                run_negbin,
-                [file_in2, prior_kind2, alpha02, beta02, k_goals, target_prob, draws2, seed_p2],
-                [meta2, table2, plot2]
-            )
 
         # ---------------- TAB 3: Tempo até o gol ----------------
         with gr.TabItem("Tempo até gol (Exponencial / Weibull)"):
-            
             prior_kind3 = gr.Radio(
                 ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"],
                 value="Uniforme (α=1, β=1)"
@@ -259,37 +239,32 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 draws3  = gr.Slider(20_000, 800_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
                 seed_p3 = gr.Number(value=42, label="Semente posterior")
 
+            gr.Markdown("### Saídas")
             meta3 = gr.Textbox(label="Resumo")
             table3 = gr.Dataframe(label="Estatísticas", interactive=False)
             plot3a = gr.Plot(label="Tempo até gol — Exponencial")
             plot3b = gr.Plot(label="Tempo até gol — Weibull")
 
+            gr.Markdown("---")
             file_in3 = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
 
-            btn_all.click(
-                run_time_to_goal,
-                [file_in3, prior_kind3, alpha03, beta03, jogos, min_por_jogo, weibull_k, draws3, seed_p3],
-                [meta3, table3, plot3a, plot3b]
-            )
-
-             # ===== Liga o botão global aos 3 cálculos =====
-            btn_all.click(
-                run_beta_binomial,
-                [file_in, prior_kind, alpha0, beta0, S_star, draws, seed_p, seed_g],
-                [meta_out, table_out, plot_post, plot_pred]
-            )
-            btn_all.click(
-                run_negbin,
-                [file_in2, prior_kind2, alpha02, beta02, k_goals, target_prob, draws2, seed_p2],
-                [meta2, table2, plot2]
-            )
-            btn_all.click(
-            run_time_to_goal,
-            [file_in3, prior_kind3, alpha03, beta03, jogos, min_por_jogo, weibull_k, draws3, seed_p3],
-            [meta3, table3, plot3a, plot3b]
-        )
+    # ===== Liga o botão global aos 3 cálculos (uma única vez, depois que tudo existe) =====
+    btn_all.click(
+        run_beta_binomial,
+        [file_in, prior_kind, alpha0, beta0, S_star, draws, seed_p, seed_g],
+        [meta_out, table_out, plot_post, plot_pred]
+    )
+    btn_all.click(
+        run_negbin,
+        [file_in2, prior_kind2, alpha02, beta02, k_goals, target_prob, draws2, seed_p2],
+        [meta2, table2, plot2]
+    )
+    btn_all.click(
+        run_time_to_goal,
+        [file_in3, prior_kind3, alpha03, beta03, jogos, min_por_jogo, weibull_k, draws3, seed_p3],
+        [meta3, table3, plot3a, plot3b]
+    )
 
 if __name__ == "__main__":
     demo.launch()
-
 

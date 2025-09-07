@@ -165,9 +165,12 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
 
 
     with gr.Tabs():
-        # --- Tab 1 ---
+        # ---------------- TAB 1: Beta–Binomial ----------------
         with gr.TabItem("Beta–Binomial (taxa de conversão)"):
-            file_in = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
+            # 1) Botão no topo
+            btn = gr.Button("Rodar", variant="primary")
+
+            # 2) Demais controles
             prior_kind = gr.Radio(
                 ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"],
                 value="Uniforme (α=1, β=1)"
@@ -180,22 +183,27 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 draws  = gr.Slider(20_000, 800_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
                 seed_p = gr.Number(value=42, label="Semente posterior")
                 seed_g = gr.Number(value=123, label="Semente preditiva")
-            btn = gr.Button("Rodar")
 
+            # 3) Saídas
             meta_out   = gr.Textbox(label="Resumo")
             table_out  = gr.Dataframe(label="Estatísticas", interactive=False)
             plot_post  = gr.Plot(label="Posterior de p")
             plot_pred  = gr.Plot(label="Preditiva de gols")
 
+            # 4) Upload por último (trocado de posição)
+            file_in = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
+
+            # 5) Registrar a ação do botão DEPOIS que todos os inputs existirem
             btn.click(
                 run_beta_binomial,
                 [file_in, prior_kind, alpha0, beta0, S_star, draws, seed_p, seed_g],
                 [meta_out, table_out, plot_post, plot_pred]
             )
 
-        # --- Tab 2 ---
+        # ---------------- TAB 2: Negativa Binomial ----------------
         with gr.TabItem("Negativa Binomial (SOT para k gols)"):
-            file_in2 = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
+            btn2 = gr.Button("Rodar", variant="primary")
+
             prior_kind2 = gr.Radio(
                 ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"],
                 value="Uniforme (α=1, β=1)"
@@ -208,11 +216,12 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             with gr.Row():
                 draws2  = gr.Slider(20_000, 800_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
                 seed_p2 = gr.Number(value=42, label="Semente posterior")
-            btn2 = gr.Button("Rodar")
 
             meta2 = gr.Textbox(label="Resumo")
             table2 = gr.Dataframe(label="Estatísticas", interactive=False)
             plot2  = gr.Plot(label="SOT necessários (distribuição)")
+
+            file_in2 = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
 
             btn2.click(
                 run_negbin,
@@ -220,9 +229,10 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 [meta2, table2, plot2]
             )
 
-        # --- Tab 3 ---
+        # ---------------- TAB 3: Tempo até o gol ----------------
         with gr.TabItem("Tempo até gol (Exponencial / Weibull)"):
-            file_in3 = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
+            btn3 = gr.Button("Rodar", variant="primary")
+
             prior_kind3 = gr.Radio(
                 ["Uniforme (α=1, β=1)", "Jeffreys (α=0.5, β=0.5)", "Personalizada"],
                 value="Uniforme (α=1, β=1)"
@@ -236,12 +246,13 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             with gr.Row():
                 draws3  = gr.Slider(20_000, 800_000, value=120_000, step=10_000, label="Amostras Monte Carlo")
                 seed_p3 = gr.Number(value=42, label="Semente posterior")
-            btn3 = gr.Button("Rodar")
 
             meta3 = gr.Textbox(label="Resumo")
             table3 = gr.Dataframe(label="Estatísticas", interactive=False)
             plot3a = gr.Plot(label="Tempo até gol — Exponencial")
             plot3b = gr.Plot(label="Tempo até gol — Weibull")
+
+            file_in3 = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
 
             btn3.click(
                 run_time_to_goal,

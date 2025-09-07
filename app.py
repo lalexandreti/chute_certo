@@ -224,7 +224,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             gr.Markdown("---")
             gr.Markdown("Caso prefira, você pode **subir um arquivo .csv** com os dados do seu time para estimar as estatísticas desejadas.")
             gr.Markdown("Formato esperado (separado por vírgulas): `temporada,total_de_chutes,chutes_no_gol,gols,defendidos,chutes_para_fora,bloqueados,na_trave`.")
-                        file_in2 = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
+            file_in2 = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
 
         # ---------------- TAB 3: Tempo até o gol ----------------
         with gr.TabItem("Tempo até gol (Exponencial / Weibull)"):

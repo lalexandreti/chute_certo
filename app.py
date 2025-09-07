@@ -150,7 +150,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         with gr.Row():
             gr.Image("logo_ppca.png", label="")
     
-    gr.Markdown("## ⚽ Simulação de Monte Carlo — TIME DA SERIE - TEMPORADAS 2023–2025")
+    gr.Markdown("## ⚽ Simulação de Monte Carlo — TIME DA SERIE A - TEMPORADAS 2023–2025")
     
     gr.Markdown("Aplicação Desenvolvida pelo Mestrando Luiz Alexandre Rodrigues Silva")
 
@@ -166,7 +166,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
    
     
     # ===== Botão global antes das abas =====
-    btn_all = gr.Button("Iniciar", variant="primary")
+    btn_all = gr.Button("Rodar Simulação", variant="primary")
 
     
     with gr.Tabs():
@@ -189,13 +189,23 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 seed_g = gr.Number(value=123, label="Semente preditiva")
 
             # 3) Saídas
+    gr.Markdown("Aqui está um resumo das informações fornecidas até o momento:)
             meta_out   = gr.Textbox(label="Resumo")
-            table_out  = gr.Dataframe(label="Estatísticas", interactive=False)
+    gr.Markdown("A partir do que foi rodada é possível levantar a seguiunte tabela de estatísticas:)
+            table_out  = gr.Dataframe(label="Tabela com as Estatísticas", interactive=True)
+    gr.Markdown("Os resultados indicaram uma probabilidade média de conversão em torno de:)
             plot_post  = gr.Plot(label="Posterior de p")
+    gr.Markdown("A previsão de possibilidade de gols com 30 finalizações no alvo mostrou média de :)
             plot_pred  = gr.Plot(label="Preditiva de gols")
-
-            # 4) Upload por último (trocado de posição)
-            file_in = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
+            
+    
+            # 4) Upload de arquivo preferencial
+    
+    gr.Markdown("Caso prefira, você pode subir um arquivo .csv. com as informações de seu time, para que possa prever as estatísticas dele no período desejado.)
+    gr.Markdown("Esse arquivo deve estar separado por vírgulas e conter, em sequência:")
+    gr.Markdown("temporada,total_de_chutes,chutes_no_gol,gols,defendidos,chutes_para_fora,bloqueados,na_trave.")
+            
+                file_in = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
 
             # 5) Registrar a ação do botão DEPOIS que todos os inputs existirem
             btn_all.click(

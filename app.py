@@ -166,6 +166,9 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
 
     with gr.Tabs():
         # ---------------- TAB 1: Beta–Binomial ----------------
+        
+            btn = gr.Button("Rodar", variant="primary")
+        
         with gr.TabItem("Beta–Binomial (taxa de conversão)"):
             # 1) Botão no topo
             btn = gr.Button("Rodar", variant="primary")

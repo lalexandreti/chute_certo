@@ -166,24 +166,6 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     # ===== Botão global antes das abas =====
     btn_all = gr.Button("Iniciar", variant="primary")
 
-    btn_all.click(
-                run_beta_binomial,
-                [file_in, prior_kind, alpha0, beta0, S_star, draws, seed_p, seed_g],
-                [meta_out, table_out, plot_post, plot_pred]
-            )
-
-    btn_all.click(
-                run_negbin,
-                [file_in2, prior_kind2, alpha02, beta02, k_goals, target_prob, draws2, seed_p2],
-                [meta2, table2, plot2]
-            )
-    btn_all.click(
-                run_time_to_goal,
-                [file_in3, prior_kind3, alpha03, beta03, jogos, min_por_jogo, weibull_k, draws3, seed_p3],
-                [meta3, table3, plot3a, plot3b]
-            )
-
-
     
     with gr.Tabs():
         # ---------------- TAB 1: Beta–Binomial ----------------
@@ -282,6 +264,23 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
                 [file_in3, prior_kind3, alpha03, beta03, jogos, min_por_jogo, weibull_k, draws3, seed_p3],
                 [meta3, table3, plot3a, plot3b]
             )
+
+             # ===== Liga o botão global aos 3 cálculos =====
+            btn_all.click(
+                run_beta_binomial,
+                [file_in, prior_kind, alpha0, beta0, S_star, draws, seed_p, seed_g],
+                [meta_out, table_out, plot_post, plot_pred]
+            )
+            btn_all.click(
+                run_negbin,
+                [file_in2, prior_kind2, alpha02, beta02, k_goals, target_prob, draws2, seed_p2],
+                [meta2, table2, plot2]
+            )
+            btn_all.click(
+            run_time_to_goal,
+            [file_in3, prior_kind3, alpha03, beta03, jogos, min_por_jogo, weibull_k, draws3, seed_p3],
+            [meta3, table3, plot3a, plot3b]
+        )
 
 if __name__ == "__main__":
     demo.launch()

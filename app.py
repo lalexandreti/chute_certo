@@ -157,8 +157,8 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
     URL = "https://fbref.com/en/squads/abdce579/2023/matchlogs/all_comps/shooting/Palmeiras-Match-Logs-All-Competitions"
     
     gr.Markdown("Esta aplicação foi desenvolvida (como default) para testar a Eficiência de Conversão de Chutes ao gol de um time da Série A.")
-    gr.Markdown("Para tanto foi realizado um scrapping na internet dos [dados do time escolhido]({URL}), nesse caso, o PALMEIRAS para estudo da simulação de MONTE CARLO.")
-    gr.Markdown("Os dados bucaram provar a eficiência dos chutes a gol que foram de fato convertidos em gol, durante os últimos tres anos, considerando")
+    gr.Markdown("Para tanto foi realizado um scrapping no site da FBREF dos dados do time escolhido, nesse caso, o [PALMEIRAS]({URL}) para uso da simulação de MONTE CARLO.")
+    gr.Markdown("Os dados bucaram servir de insumos para provar a eficiência dos chutes a gol que foram de fato convertidos em gol, durante os últimos três anos, considerando")
     gr.Markdown("#A Temporada de 2023 completa (Serie A e Libertadores).")
     gr.Markdown("#A Temporada de 2024 completa (Serie A e Libertadores).")
     gr.Markdown("#A Temporada de 2025 parcial, até o dia 07 de setembro de 2025 (Serie A, Mundial de Clubes e Libertadores).")
@@ -198,7 +198,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             file_in = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
 
             # 5) Registrar a ação do botão DEPOIS que todos os inputs existirem
-            btn.click(
+            btn_all.click(
                 run_beta_binomial,
                 [file_in, prior_kind, alpha0, beta0, S_star, draws, seed_p, seed_g],
                 [meta_out, table_out, plot_post, plot_pred]

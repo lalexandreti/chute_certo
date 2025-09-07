@@ -194,9 +194,7 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             plot_pred = gr.Plot(label="Preditiva de gols")
 
             gr.Markdown("---")
-            gr.Markdown(
-                "Caso prefira, você pode **subir um arquivo .csv** com os dados do seu time para estimar as estatísticas desejadas."
-            )
+            gr.Markdown("Caso prefira, você pode **subir um arquivo .csv** com os dados do seu time para estimar as estatísticas desejadas.")
             gr.Markdown("Formato esperado (separado por vírgulas): `temporada,total_de_chutes,chutes_no_gol,gols,defendidos,chutes_para_fora,bloqueados,na_trave`.")
             file_in = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
 
@@ -224,7 +222,9 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             plot2  = gr.Plot(label="Finalizações no alvo necessários (distribuição)")
 
             gr.Markdown("---")
-            file_in2 = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
+            gr.Markdown("Caso prefira, você pode **subir um arquivo .csv** com os dados do seu time para estimar as estatísticas desejadas.")
+            gr.Markdown("Formato esperado (separado por vírgulas): `temporada,total_de_chutes,chutes_no_gol,gols,defendidos,chutes_para_fora,bloqueados,na_trave`.")
+                        file_in2 = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
 
         # ---------------- TAB 3: Tempo até o gol ----------------
         with gr.TabItem("Tempo até gol (Exponencial / Weibull)"):
@@ -249,10 +249,12 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             table3 = gr.Dataframe(label="Estatísticas", interactive=False)
             gr.Markdown("Neste gráfico pode-se observar o tempo médio até o gol, considerando a 'cauda longa', durante as partidas:")
             plot3a = gr.Plot(label="Tempo até gol — Exponencial")
-            gr.Markdown("Finalmente, aqui se observa uma dispersão diferente, mais realista em certos contextos, considerando por exemploa a pressão ofensiva durantea partida:")
+            gr.Markdown("Finalmente, aqui se observa uma dispersão diferente, mais realista em certos contextos, considerando por exemplo a pressão ofensiva durante a partida:")
             plot3b = gr.Plot(label="Tempo até gol — Weibull")
 
             gr.Markdown("---")
+            gr.Markdown("Caso prefira, você pode **subir um arquivo .csv** com os dados do seu time para estimar as estatísticas desejadas.")
+            gr.Markdown("Formato esperado (separado por vírgulas): `temporada,total_de_chutes,chutes_no_gol,gols,defendidos,chutes_para_fora,bloqueados,na_trave`.")
             file_in3 = gr.File(label="CSV (opcional)", file_count="single", type="filepath")
 
     # ===== Liga o botão global aos 3 cálculos (uma única vez, depois que tudo existe) =====
